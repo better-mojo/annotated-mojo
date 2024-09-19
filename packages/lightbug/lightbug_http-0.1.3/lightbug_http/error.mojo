@@ -8,4 +8,8 @@ alias TODO_MESSAGE = String("TODO").as_bytes()
 @value
 struct ErrorHandler:
     fn Error(self) -> HTTPResponse:
+
+        #
+        # TODO X: 自定义错误处理
+        #
         return HTTPResponse(ResponseHeader(), TODO_MESSAGE)

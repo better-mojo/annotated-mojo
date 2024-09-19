@@ -4,7 +4,9 @@ from lightbug_http.net import Listener
 
 alias DefaultConcurrency: Int = 256 * 1024
 
-
+#
+# TODO X: 核心 Server 接口定义
+#
 trait ServerTrait:
     fn __init__(
         inout self, addr: String, service: HTTPService, error_handler: ErrorHandler
@@ -14,8 +16,14 @@ trait ServerTrait:
     fn get_concurrency(self) -> Int:
         ...
 
+    #
+    #
+    #
     fn listen_and_serve(self, address: String, handler: HTTPService) raises -> None:
         ...
 
+    #
+    #
+    #
     fn serve(self, ln: Listener, handler: HTTPService) raises -> None:
         ...
