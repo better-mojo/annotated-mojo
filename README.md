@@ -23,15 +23,13 @@
 
 - 项目分析, 入口在 [packages](./packages) 的 `README.md` 中.
 
-| 项目                           | 类型       | 评分  | 注解状态 | 备注                                         |
-|:-----------------------------|:---------|:----|:-----|:-------------------------------------------|
-| [gojo](./packages/gojo)      | 仿写 Go标准库 | ⭐⭐⭐ | No   | https://github.com/thatstoasty/gojo        |
-| [lightbug](./packages/light) | kv db    | ⭐⭐⭐ | No   | https://github.com/saviorand/lightbug_http |
-| [xxx](./xxx)                 | db ORM   | ⭐⭐⭐ | No   | https://github.com/diesel-rs/diesel        |
-| [xxx](./xxx)                 | 区块链      | ⭐⭐⭐ | No   | https://github.com/solana-labs/solana      |
-| [xxx](./xxx)                 | xxx      | ⭐⭐⭐ | No   | xxx                                        |
-| [xxx](./xxx)                 | xxx      | ⭐⭐⭐ | No   | xxx                                        |
-| [xxx](./xxx)                 | xxx      | ⭐⭐⭐ | No   | xxx                                        |
+| 项目                              | 类型          | 评分  | 注解状态 | 备注                                         |
+|:--------------------------------|:------------|:----|:-----|:-------------------------------------------|
+| [lightbug](./packages/lightbug) | Mojo Http 库 | ⭐⭐⭐ | WIP  | https://github.com/saviorand/lightbug_http |
+| [gojo](./packages/gojo)         | 仿写 Go 标准库   | ⭐⭐⭐ | WIP  | https://github.com/thatstoasty/gojo        | 
+| [xxx](./xxx)                    | xxx         | ⭐⭐⭐ | No   | xxx                                        |
+| [xxx](./xxx)                    | xxx         | ⭐⭐⭐ | No   | xxx                                        |
+| [xxx](./xxx)                    | xxx         | ⭐⭐⭐ | No   | xxx                                        |
 
 ## 准备工作:
 
