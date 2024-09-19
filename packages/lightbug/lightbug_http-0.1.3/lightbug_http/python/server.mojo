@@ -19,9 +19,12 @@ from lightbug_http.strings import NetworkType
 
 alias default_max_request_body_size = 4 * 1024 * 1024  # 4MB
 
+#
+#
+#
 struct PythonServer:
-    var pymodules: Modules
-    var error_handler: ErrorHandler
+    var pymodules: Modules  # TODO X: 导入 python 模块
+    var error_handler: ErrorHandler  # TODO X: 自定义错误处理
 
     var name: String
     var max_concurrent_connections: Int
@@ -31,8 +34,13 @@ struct PythonServer:
     var ln: PythonTCPListener
 
     fn __init__(inout self) raises:
+
+        #
+        #
+        #
         self.pymodules = Modules()
         self.error_handler = ErrorHandler()
+
         self.name = "lightbug_http"
         self.max_concurrent_connections = 1000
         self.tcp_keep_alive = False
@@ -54,17 +62,41 @@ struct PythonServer:
             concurrency = DefaultConcurrency
         return concurrency
 
+
+
+    #
+    #
+    #
     fn listen_and_serve[
         T: HTTPService
     ](inout self, address: String, handler: T) raises -> None:
+        #
+        #
+        #
         var __net = PythonNet()
+
+        #
+        #
+        #
         var listener = __net.listen(NetworkType.tcp4.value, address)
+
+        #
+        #
+        #
         self.serve(listener, handler)
 
+
+    #
+    #
+    #
     fn serve[
         T: HTTPService
     ](inout self, ln: PythonTCPListener, handler: T) raises -> None:
         self.ln = ln
+
+        #
+        #
+        #
         var conn = self.ln.accept()
         
         var b = Bytes(capacity=default_buffer_size)
@@ -83,12 +115,20 @@ struct PythonServer:
         var max_request_body_size = default_max_request_body_size
         
         var req_number = 0
-        
+
+
+        #
+        #
+        #
         while True:
             req_number += 1
 
             if req_number > 1:
                 var b = Bytes(capacity=default_buffer_size)
+
+                #
+                #
+                #
                 var bytes_recv = conn.read(b)
                 if bytes_recv == 0:
                     conn.close()
@@ -98,7 +138,15 @@ struct PythonServer:
 
             var header = RequestHeader()
             var first_line_and_headers_len = 0
+
+
+            #
+            #
+            #
             try:
+                #
+                #
+                #
                 first_line_and_headers_len = header.parse_raw(reader)
             except e:
                 error = Error("Failed to parse request headers: " + e.__str__())
@@ -120,6 +168,9 @@ struct PythonServer:
                 )
             
             try:
+                #
+                #
+                #
                 request.read_body(reader, header.content_length(), first_line_and_headers_len, max_request_body_size)
             except e:
                 error = Error("Failed to read request body: " + e.__str__())
@@ -131,6 +182,10 @@ struct PythonServer:
             
             var res_encoded = encode(res)
 
+
+            #
+            #
+            #
             _ = conn.write(res_encoded)
 
             if not self.tcp_keep_alive:

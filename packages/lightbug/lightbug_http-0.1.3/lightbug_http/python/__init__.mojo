@@ -1,6 +1,8 @@
 from python import Python, PythonObject
 
-
+#
+# TODO X: 导入 python 原生模块, socket 和 builtins
+#
 @value
 struct Modules:
     var builtins: PythonObject
@@ -13,6 +15,9 @@ struct Modules:
     @staticmethod
     fn __load_socket() -> PythonObject:
         try:
+            #
+            # TODO X: 导入 python 模块
+            #
             var socket = Python.import_module("socket")
             return socket
         except e:
@@ -22,6 +27,9 @@ struct Modules:
     @staticmethod
     fn __load_builtins() -> PythonObject:
         try:
+            #
+            # TODO X: 导入 python 模块
+            #
             var builtins = Python.import_module("builtins")
             return builtins
         except e:
