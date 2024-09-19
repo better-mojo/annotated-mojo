@@ -1,6 +1,9 @@
 from lightbug_http import *
 
+#
+# TODO X: 一个 http server 最小用例.
+#
 fn main() raises:
-    var server = SysServer()
-    var handler = Welcome()
-    server.listen_and_serve("0.0.0.0:8080", handler)
+    var server = SysServer() # TODO X: 源码阅读入口, 从此顺藤摸瓜.
+    var handler = Welcome()  # TODO X: 内置了示例 router handler
+    server.listen_and_serve("0.0.0.0:8080", handler) # TODO X: http server 启动
