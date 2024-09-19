@@ -10,7 +10,8 @@
     <img src="https://visitor-badge.laobi.icu/badge?page_id=better-mojo" alt="10000" />
 </p>
 
-- Mojo Top 项目源码注解
+- 🔥️ Mojo Top 项目源码注解
+- 🔥️ [Mojo 技术交流群](https://github.com/better-mojo/.github/blob/main/profile/README.md#chat-group)
 
 ## related:
 
