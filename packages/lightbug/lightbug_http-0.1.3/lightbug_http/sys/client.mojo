@@ -37,6 +37,9 @@ struct MojoClient(Client):
         self.port = port
         self.name = "lightbug_http_client"
 
+    #
+    # TODO X: `Client` 接口
+    #
     fn do(self, req: HTTPRequest) raises -> HTTPResponse:
         """
         The `do` method is responsible for sending an HTTP request to a server and receiving the corresponding response.
@@ -89,10 +92,17 @@ struct MojoClient(Client):
             else:
                 port = 80
 
+
+        #
+        #
+        #
         var conn = create_connection(self.fd, host_str, port)
         
         var req_encoded = encode(req)
 
+        #
+        #
+        #
         var bytes_sent = conn.write(req_encoded)
         if bytes_sent == -1:
             raise Error("Failed to send message")
@@ -111,14 +121,23 @@ struct MojoClient(Client):
         var header = ResponseHeader()
         var first_line_and_headers_len = 0
         try:
+            #
+            #
+            #
             first_line_and_headers_len = header.parse_raw(reader)
         except e:
             conn.close()
             error = Error("Failed to parse response headers: " + e.__str__())
-        
+
+        #
+        #
+        #
         var response = HTTPResponse(header, Bytes())
 
         try:
+            #
+            #
+            #
             response.read_body(reader, first_line_and_headers_len,)
         except e:
             error = Error("Failed to read request body: " + e.__str__())

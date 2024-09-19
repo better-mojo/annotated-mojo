@@ -16,6 +16,12 @@ alias NOT_FOUND_MESSAGE = String("Not Found").as_bytes()
 alias TEXT_PLAIN_CONTENT_TYPE = String("text/plain").as_bytes()
 alias OCTET_STREAM_CONTENT_TYPE = String("application/octet-stream").as_bytes()
 
+
+###############################################################################
+
+#
+# TODO X: 接口定义: 请求接口
+#
 trait Request:
     fn __init__(inout self, uri: URI):
         ...
@@ -57,6 +63,11 @@ trait Request:
         ...
 
 
+###############################################################################
+
+#
+# TODO X: 接口定义: 响应接口
+#
 trait Response:
     fn __init__(inout self, header: ResponseHeader, body: Bytes):
         ...
@@ -73,7 +84,11 @@ trait Response:
     fn connection_close(self) -> Bool:
         ...
 
+###############################################################################
 
+#
+# TODO X: Request 接口(trait)的实现
+#
 @value
 struct HTTPRequest(Request):
     var header: RequestHeader
@@ -130,9 +145,15 @@ struct HTTPRequest(Request):
         self.timeout = timeout
         self.disable_redirect_path_normalization = disable_redirect_path_normalization
 
+    ###############################################################################
+
+
     fn get_body_bytes(self) -> Span[UInt8, __lifetime_of(self)]:
         return Span[UInt8, __lifetime_of(self)](self.body_raw)
 
+    #
+    #
+    #
     fn set_body_bytes(inout self, body: Bytes) -> Self:
         self.body_raw = body
         return self
@@ -171,7 +192,13 @@ struct HTTPRequest(Request):
 
     fn connection_close(self) -> Bool:
         return self.header.connection_close()
-    
+
+
+    ###############################################################################
+
+    #
+    # TODO X: 核心方法, 读取请求内容
+    #
     fn read_body(inout self, inout r: Reader, content_length: Int, header_len: Int, max_body_size: Int) raises -> None:
         if content_length > max_body_size:
             raise Error("Request body too large")
@@ -180,9 +207,15 @@ struct HTTPRequest(Request):
 
         var body_buf_result = r.peek(r.buffered())
         var body_buf = body_buf_result[0]
-        
+
         _ = self.set_body_bytes(body_buf)
 
+
+###############################################################################
+
+#
+# TODO X: Response 接口(trait)的实现
+#
 @value
 struct HTTPResponse(Response):
     var header: ResponseHeader
@@ -214,7 +247,9 @@ struct HTTPResponse(Response):
         self.skip_reading_writing_body = False
         self.raddr = TCPAddr()
         self.laddr = TCPAddr()
-    
+
+    ###############################################################################
+
     fn get_body_bytes(self) -> Span[UInt8, __lifetime_of(self)]:
         return Span[UInt8, __lifetime_of(self)](self.body_raw)
 
@@ -224,7 +259,7 @@ struct HTTPResponse(Response):
     fn set_body_bytes(inout self, body: Bytes) -> Self:
         self.body_raw = body
         return self
-    
+
     fn set_status_code(inout self, status_code: Int) -> Self:
         _ = self.header.set_status_code(status_code)
         return self
@@ -238,14 +273,25 @@ struct HTTPResponse(Response):
 
     fn connection_close(self) -> Bool:
         return self.header.connection_close()
-    
+
+
+    ###############################################################################
+
+    #
+    #
+    #
     fn read_body(inout self, inout r: Reader, header_len: Int) raises -> None:
         _ = r.discard(header_len)
 
         var body_buf_result = r.peek(r.buffered())
-        
+
         _ = self.set_body_bytes(body_buf_result[0])
 
+###############################################################################
+
+#
+# TODO X: Response 构造器, 用于构造响应
+#
 fn OK(body: StringLiteral) -> HTTPResponse:
     return HTTPResponse(
         ResponseHeader(200, OK_MESSAGE, TEXT_PLAIN_CONTENT_TYPE), body.as_bytes_slice(),
@@ -281,11 +327,23 @@ fn OK(body: Bytes, content_type: String, content_encoding: String) -> HTTPRespon
         ResponseHeader(200, OK_MESSAGE, content_type.as_bytes(), content_encoding.as_bytes()), body,
     )
 
+
+###############################################################################
+
+#
+# TODO X: Response 构造器, 用于构造错误响应
+#
 fn NotFound(path: String) -> HTTPResponse:
     return HTTPResponse(
         ResponseHeader(404, NOT_FOUND_MESSAGE, TEXT_PLAIN_CONTENT_TYPE), ("path " + path + " not found").as_bytes(),
     )
 
+
+###############################################################################
+
+#
+#
+#
 fn encode(req: HTTPRequest) -> Bytes:
     var builder = StringBuilder()
 
@@ -296,7 +354,7 @@ fn encode(req: HTTPRequest) -> Bytes:
     else:
         _ = builder.write_string(strSlash)
     _ = builder.write_string(whitespace)
-    
+
     _ = builder.write(req.header.protocol())
 
     _ = builder.write_string(rChar)
@@ -325,15 +383,15 @@ fn encode(req: HTTPRequest) -> Bytes:
         _ = builder.write_string("close")
     else:
         _ = builder.write_string("keep-alive")
-    
+
     _ = builder.write_string(rChar)
     _ = builder.write_string(nChar)
     _ = builder.write_string(rChar)
     _ = builder.write_string(nChar)
-    
+
     if len(req.body_raw) > 0:
         _ = builder.write(req.get_body_bytes())
-    
+
     # TODO: Might want to avoid creating a string then copying the bytes
     return str(builder).as_bytes()
 
@@ -398,7 +456,7 @@ fn encode(res: HTTPResponse) -> Bytes:
     _ = builder.write_string(nChar)
     _ = builder.write_string(rChar)
     _ = builder.write_string(nChar)
- 
+
     if len(res.body_raw) > 0:
         _ = builder.write(res.get_body_bytes())
 

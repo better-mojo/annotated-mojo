@@ -44,7 +44,7 @@ struct SysServer:
     fn __init__(inout self) raises:
         self.error_handler = ErrorHandler()
         self.name = "lightbug_http"
-        self.__address = "127.0.0.1"
+        self.__address = "127.0.0.1"               # TODO X: 默认本地地址
         self.max_concurrent_connections = 1000
         self.max_requests_per_connection = 0
         self.__max_request_body_size = default_max_request_body_size
@@ -61,6 +61,7 @@ struct SysServer:
         self.tcp_keep_alive = tcp_keep_alive
         self.ln = SysListener()
 
+    # TODO X: 自定义地址
     fn __init__(inout self, own_address: String) raises:
         self.error_handler = ErrorHandler()
         self.name = "lightbug_http"
@@ -101,6 +102,12 @@ struct SysServer:
         self.tcp_keep_alive = tcp_keep_alive
         self.ln = SysListener()
 
+
+    ###############################################################################
+
+    #
+    #
+    #
     fn address(self) -> String:
         return self.__address
 
@@ -128,6 +135,12 @@ struct SysServer:
             concurrency = DefaultConcurrency
         return concurrency
 
+
+    ###############################################################################
+
+    #
+    # TODO X: 核心方法, 处理 http 请求
+    #
     fn listen_and_serve[
         T: HTTPService
     ](inout self, address: String, handler: T) raises -> None:
@@ -138,11 +151,23 @@ struct SysServer:
             address : String - The address (host:port) to listen on.
             handler : HTTPService - An object that handles incoming HTTP requests.
         """
+
+        #
+        #
+        #
         var __net = SysNet()
         var listener = __net.listen(NetworkType.tcp4.value, address)
         _ = self.set_address(address)
+
+        #
+        #
+        #
         self.serve(listener, handler)
 
+
+    #
+    # TODO X: 处理 http 请求
+    #
     fn serve[T: HTTPService](inout self, ln: SysListener, handler: T) raises -> None:
         """
         Serve HTTP requests.
@@ -158,8 +183,16 @@ struct SysServer:
 
         while True:
             var conn = self.ln.accept()
+
+            #
+            #
+            #
             self.serve_connection(conn, handler)
 
+
+    #
+    # TODO X: 处理单个 http 请求
+    #
     fn serve_connection[T: HTTPService](inout self, conn: SysConnection, handler: T) raises -> None:
         """
         Serve a single connection.
@@ -172,12 +205,24 @@ struct SysServer:
         If there is an error while serving the connection.
         """
         var b = Bytes(capacity=default_buffer_size)
-        var bytes_recv = conn.read(b)
+
+
+        #
+        # TODO X: 设置最大请求体大小
+        #
+        var bytes_recv = conn.read(b)   # TODO X: 读取请求
         if bytes_recv == 0:
             conn.close()
             return
 
+        #
+        #
+        #
         var buf = Buffer(b^)
+
+        #
+        #
+        #
         var reader = Reader(buf^)
         var error = Error()
 
@@ -187,6 +232,9 @@ struct SysServer:
 
         var req_number = 0
 
+        #
+        #
+        #
         while True:
             req_number += 1
 
@@ -201,7 +249,14 @@ struct SysServer:
 
             var header = RequestHeader()
             var first_line_and_headers_len = 0
+
+            #
+            #
+            #
             try:
+                #
+                #
+                #
                 first_line_and_headers_len = header.parse_raw(reader)
             except e:
                 error = Error("Failed to parse request headers: " + e.__str__())
@@ -216,6 +271,11 @@ struct SysServer:
                 if max_request_body_size > 0 and header.content_length() > max_request_body_size:
                     error = Error("Request body too large")
 
+            ###############################################################################
+
+            #
+            #
+            #
             var request = HTTPRequest(
                 uri,
                 Bytes(),
@@ -227,11 +287,20 @@ struct SysServer:
             except e:
                 error = Error("Failed to read request body: " + e.__str__())
 
+            ###############################################################################
+
+            #
+            # TODO X: 处理请求, 一次 HTTP 请求的处理结果
+            #
             var res = handler.func(request)
 
             if not self.tcp_keep_alive:
                 _ = res.set_connection_close()
 
+
+            #
+            # TODO X: 发送响应
+            #
             _ = conn.write(encode(res))
 
             if not self.tcp_keep_alive:

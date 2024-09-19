@@ -105,6 +105,10 @@ struct SysListener:
         self.__addr = addr
         self.fd = fd
 
+
+    #
+    #
+    #
     fn accept(self) raises -> SysConnection:
         var their_addr = sockaddr(0, StaticTuple[c_char, 14]())
         var their_addr_ptr = Reference[sockaddr](their_addr)
@@ -120,6 +124,10 @@ struct SysListener:
             print("Failed to accept connection, system accept() returned an error.")
         var peer = get_peer_name(new_sockfd)
 
+
+        #
+        #
+        #
         return SysConnection(
             self.__addr, TCPAddr(peer.host, atol(peer.port)), new_sockfd
         )
@@ -175,6 +183,10 @@ struct SysListenConfig(ListenConfig):
         var ai = sockaddr_in(address_family, bin_port, raw_ip, StaticTuple[c_char, 8]())
         var ai_ptr = Reference[sockaddr_in](ai)
 
+
+        #
+        #
+        #
         while not bind_success:
             # var bind = bind(sockfd, ai_ptr, sizeof[sockaddr_in]())
             var bind = external_call[
@@ -207,6 +219,9 @@ struct SysListenConfig(ListenConfig):
         return listener
 
 
+#
+#
+#
 @value
 struct SysConnection(Connection):
     var fd: c_int
@@ -228,7 +243,15 @@ struct SysConnection(Connection):
         self.laddr = laddr
         self.fd = fd
 
+
+    #
+    #
+    #
     fn read(self, inout buf: Bytes) raises -> Int:
+
+        #
+        #
+        #
         var bytes_recv = recv(self.fd, buf.unsafe_ptr().offset(buf.size), buf.capacity - buf.size, 0)
         if bytes_recv == -1:
             return 0
@@ -239,7 +262,15 @@ struct SysConnection(Connection):
             return bytes_recv
         return bytes_recv
 
+
+    #
+    #
+    #
     fn write(self, owned msg: String) raises -> Int:
+
+        #
+        #
+        #
         var bytes_sent = send(self.fd, msg.unsafe_ptr(), len(msg), 0)
         if bytes_sent == -1:
             print("Failed to send response")
@@ -247,6 +278,10 @@ struct SysConnection(Connection):
     
     fn write(self, buf: Bytes) raises -> Int:
         var content = to_string(buf)
+
+        #
+        #
+        #
         var bytes_sent = send(self.fd, content.unsafe_ptr(), len(content), 0)
         if bytes_sent == -1:
             print("Failed to send response")

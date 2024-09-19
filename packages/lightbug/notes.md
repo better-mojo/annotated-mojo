@@ -41,6 +41,7 @@ lightbug/lightbug_http-0.1.3/lightbug_http on  main [!⇡] on ☁️
 
  
 ```
+
 ### 入口:
 
 - ✅️ [lightbug.🔥](lightbug_http-0.1.3/lightbug.🔥)
@@ -50,3 +51,8 @@ lightbug/lightbug_http-0.1.3/lightbug_http on  main [!⇡] on ☁️
 
 - ✅️ [Mojo 函数重载](https://docs.modular.com/mojo/manual/functions#overloaded-functions)
     - 对应用例: [lightbug_http/sys/server.mojo#SysServer](lightbug_http-0.1.3/lightbug_http/sys/server.mojo)
+    - python 为啥不需要 `函数重载`? 动态语言(鸭子类型), 参数本身类型就可变, 不需要 `函数重载`。
+    - 静态语言, 才需要 `函数重载`。
+- ✅️
+- ✅️
+- ✅️
