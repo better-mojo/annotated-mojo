@@ -14,7 +14,7 @@
 
 ## related:
 
-- ✅️ https://github.com/better-rs/learn-mojo
+- ✅️ https://github.com/better-mojo/learn-mojo
     - mojo 编程练习 & 算法练习 & 热门项目实践
 
 ## 注解项目列表:
